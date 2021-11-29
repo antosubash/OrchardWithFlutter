@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:orcharddemo/constants.dart';
 import 'package:orcharddemo/services/auth.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,17 +11,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   final HttpLink httpLink = HttpLink(
-    'https://api.github.com/graphql',
+    Constants.apiUrl,
   );
 
   final AuthLink authLink = AuthLink(
-    getToken: () async => 'Bearer <YOUR_PERSONAL_ACCESS_TOKEN>',
+    getToken: () async => 'Bearer ',
   );
 
-
-  String logoutUrl = "";
   var auth = AuthService();
   @override
   Widget build(BuildContext context) {

@@ -3,12 +3,9 @@ import 'package:openid_client/openid_client.dart';
 import 'package:openid_client/openid_client_io.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
-
 import '../constants.dart';
 
 class AuthService {
-  String clientId = Constants.clientId; // = 'client1';
-  late String issuer = Constants.apiUrl; // = 'https://5e0f-84-113-156-160.ngrok.io';
   late FlutterSecureStorage storage;
   final List<String> _scopes = <String>[
     'openid',
@@ -22,11 +19,11 @@ class AuthService {
   }
 
   Future<String?> login() async {
-    var tokenInfo = await authenticate(Uri.parse(issuer), clientId, _scopes);
+    var tokenInfo = await authenticate(Uri.parse(Constants.apiUrl), Constants.clientId, _scopes);
     return tokenInfo.accessToken;
   }
 
-  Future<void> resetTokens() async {
+  Future resetTokens() async {
     await storage.write(key: Constants.accessToken, value: null);
     await storage.write(key: Constants.refreshToken, value: null);
     await storage.write(key: Constants.accessTokenExpiration, value: null);
@@ -72,7 +69,7 @@ class AuthService {
     return res;
   }
 
-  Future<void> logout(String logoutUrl) async {
+  Future logout(String logoutUrl) async {
     if (await canLaunch(logoutUrl)) {
       await launch(logoutUrl, forceWebView: true);
     } else {
