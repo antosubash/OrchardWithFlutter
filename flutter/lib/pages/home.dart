@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:orcharddemo/constants.dart';
+import 'package:orcharddemo/components/languages.dart';
+import 'package:orcharddemo/components/login.dart';
 import 'package:orcharddemo/services/auth.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,14 +11,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final HttpLink httpLink = HttpLink(
-    Constants.apiUrl,
-  );
-
-  final AuthLink authLink = AuthLink(
-    getToken: () async => 'Bearer ',
-  );
-
   var auth = AuthService();
   @override
   Widget build(BuildContext context) {
@@ -26,26 +18,21 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text("Home"),
       ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              child: const Text("Login"),
-              onPressed: () async {
-                var tokenInfo = await auth.login();
-                print(tokenInfo);
-              },
-            ),
-            ElevatedButton(
-              child: const Text("Logout"),
-              onPressed: () async {
-                //auth.logout();
-              },
-            ),
-          ],
-        ),
+      body: FutureBuilder<bool>(
+        future: auth.isLoggedIn(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data == true) {
+              return const Languages();
+            } else {
+              return const Login();
+            }
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
       ),
     );
   }

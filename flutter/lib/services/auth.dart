@@ -18,8 +18,15 @@ class AuthService {
     storage = const FlutterSecureStorage();
   }
 
+  Future<bool> isLoggedIn() async {
+    return await storage.read(key: Constants.accessToken) != null;
+  }
+
   Future<String?> login() async {
-    var tokenInfo = await authenticate(Uri.parse(Constants.apiUrl), Constants.clientId, _scopes);
+    var tokenInfo = await authenticate(
+        Uri.parse(Constants.apiUrl), Constants.clientId, _scopes);
+    updateTokens(tokenInfo.accessToken, tokenInfo.refreshToken,
+        tokenInfo.expiresAt!.toIso8601String());
     return tokenInfo.accessToken;
   }
 
@@ -30,7 +37,7 @@ class AuthService {
   }
 
   Future updateTokens(
-      String accessToken, String refreshToken, String expiration) async {
+      String? accessToken, String? refreshToken, String? expiration) async {
     await storage.write(key: Constants.accessToken, value: accessToken);
     await storage.write(key: Constants.refreshToken, value: refreshToken);
     await storage.write(
